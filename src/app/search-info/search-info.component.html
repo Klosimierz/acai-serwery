@@ -1,0 +1,15 @@
+<div class="container mt-4">
+    <div class="row mx-2">
+        <div class="">
+            <p class="m-0 font-weight-bold">Servers</p>
+            <p class="m-0">Number of elements: {{servCount}}</p>
+        </div>
+        <div class="ml-auto form-group has-search mt-2">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input [(ngModel)]='filterString' class="h-100 rounded-pill b-gray form-control text-muted" type="text" placeholder="Search">
+        </div>
+    </div>
+    <div>
+        <app-server-list [filterBy]='filterString' (eventGetNumber)='servNum($event)'></app-server-list>
+    </div> 
+</div>

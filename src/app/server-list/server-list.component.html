@@ -1,0 +1,51 @@
+<div class="container bg-white px-0">
+    <!-- co do tego niżej - nie potrafię zrozumieć czemu ten event nie działa... 
+      dawałem (click) to przechodziło do wyższego komponentu ale to przecież nie ma sensu
+      żeby klikać na tablice aby się wyżej wyświetliło ile widzi serwerów.
+      Load powinien się aktywować po załadowaniu, i... nic sie nie dzieje.
+      Gdybym nie dzielił tego na 2 komponenty (pasek z searchem i liczbą serwerów właśnie + sama tabela)
+      to ten problem w ogóle by nie istniał, ale było zastrzeżenie wcześniej że nie dzielę aplikacji na 
+      moduły (zrozumiałem, że chodzi o komponenty, dzielenie czegoś tak małego na moduły to wg mnie utrudnianie 
+      sobie życia (to zresztą też było w sumie niepotrzebne utrudnienie, ale zrobiłem to dla pewności)) 
+    -->
+    <table class="table" *ngIf='serverList$ | async as servers' (load)='sendUp(servers.length)'>
+        <thead class="text-secondary semi-bold">
+            <td>NAME</td>
+            <td>STATUS</td>
+            <td></td>
+        </thead>
+        <tr *ngFor='let server of servers' class="mini-bold">
+            <td width="25%" class="align-middle">
+                {{server.name}}
+            </td>
+            <td width="50%" class="align-middle" [ngSwitch]='server.status' [ngClass]='availabilityColor(server.status)'>
+                <span *ngSwitchCase="'OFFLINE'" class="fa fa-times text-danger"></span>
+                <span *ngSwitchCase="'ONLINE'" class="fa fa-circle align-middle" style="font-size: 0.8em;"></span>
+                <span>&nbsp;{{server.status}}</span>
+                <span *ngSwitchDefault>...</span>
+            </td>
+            <td width="25%">
+                <div class="dropdown float-right">
+                    <button class="btn dropdown-toggle text-secondary p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" 
+                    aria-haspopup="true" aria-expanded="false" style="font-size: 1.5em">
+                      <p class="align-middle">...</p>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a *ngIf='server.status !== ("REBOOTING"||"ONLINE")' 
+                        class="dropdown-item" 
+                        href="#"
+                        (click)='enableServer(server.id)'>Enable</a>
+                      <a *ngIf='server.status !== ("REBOOTING"||"OFFLINE")'
+                        class="dropdown-item" 
+                        href="#"
+                        (click)='disableServer(server.id)'>Disable</a>
+                      <a *ngIf='server.status !== ("REBOOTING"||"OFFLINE")' 
+                        class="dropdown-item" 
+                        href="#"
+                        (click)='rebootServer(server.id)'>Reboot</a>
+                    </div>
+                  </div>
+            </td>
+        </tr>
+    </table>
+</div>
