@@ -110,6 +110,7 @@ export class ServerListComponent implements OnInit {
     this.serverList$ = this.CrudServices.getServers()
     .pipe(
       tap(listed => {
+        //Tap do tego nie służy ale od biedy można użyć
         this.sendUp(listed.length);
       })
     )
