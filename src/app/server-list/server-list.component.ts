@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CrudServices } from '../services/crud-services.service';
 import { Observable, interval } from 'rxjs';
 import {IServer} from '../common/server';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-server-list',
@@ -94,18 +94,25 @@ export class ServerListComponent implements OnInit {
     this.serverList$ = this.CrudServices.getServers();
     return this.serverList$.pipe(
       //map fires too many times - resolved
-      map((listed) => {
-        return listed.filter(
+      map((listed) => {      
+        const out = listed.filter(
           element => {
-            return element['name'].toLocaleLowerCase().indexOf(filterExp.toLocaleLowerCase()) !== -1;
+            return element['name'].toLocaleLowerCase().indexOf(filterExp.toLocaleLowerCase()) !== -1;           
           }
         )
+        this.sendUp(out.length);
+        return out;
       })
     )
   }
 
   ngOnInit() {
-    this.serverList$ = this.CrudServices.getServers();
+    this.serverList$ = this.CrudServices.getServers()
+    .pipe(
+      tap(listed => {
+        this.sendUp(listed.length);
+      })
+    )
   }
   //on destroy niepotrzebny bo używam async pipe
 }
