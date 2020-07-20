@@ -21,7 +21,14 @@ export class ServerListComponent implements OnInit {
 
   @Input() set filterBy(value) {
     this._filterBy = value;
-    this.serverList$ = this.filterBy ? this.performFilter(this.filterBy) : this.CrudServices.getServers();
+    this.serverList$ = this.filterBy ? this.performFilter(this.filterBy) : this.CrudServices.getServers()
+    .pipe(
+      tap(
+        listed => {
+          this.sendUp(listed.length);
+        }
+      )
+    );
   }
  
   @Output() eventGetNumber: EventEmitter<number> = new EventEmitter();
@@ -94,7 +101,7 @@ export class ServerListComponent implements OnInit {
     this.serverList$ = this.CrudServices.getServers();
     return this.serverList$.pipe(
       //map fires too many times - resolved
-      map((listed) => {      
+      map((listed) => {  
         const out = listed.filter(
           element => {
             return element['name'].toLocaleLowerCase().indexOf(filterExp.toLocaleLowerCase()) !== -1;           
